@@ -8,7 +8,7 @@ CMD = """ffmpeg -hide_banner -t 3 -i "{input_path}" \
 -filter_complex "color=color=black@0.0:size={height}x{width},setdar=dar=1,format=rgba[a]; \
 [0:0]setdar=dar=1,scale={height}:{width},format=rgba[b]; \
 [b][a]blend=all_mode='overlay':all_opacity=0" \
--c:v libvpx-vp9 -pix_fmt yuva420p -b:v 85K -metadata:s:v alpha_mode="1" -an -y "{output_video}\""""
+-c:v libvpx-vp9 -pix_fmt yuva420p -maxrate 85k -metadata:s:v alpha_mode="1" -an -y "{output_video}\""""
 
 CHECK_CMD = """ffprobe -hide_banner -print_format json -show_format -show_streams -i "{input_video}\""""
 MAX_HEIGHT = 512

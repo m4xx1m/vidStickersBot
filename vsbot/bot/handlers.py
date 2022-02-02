@@ -1,10 +1,10 @@
 import os
-
 from tempfile import mkstemp
 from aiogram.types import Message
-from vsbot.misc import db, bot
+from vsbot.misc import db, dp
 from vsbot.log import logger
 from vsbot.convert import process_video
+from aiogram.utils.exceptions import Throttled
 
 
 async def start(message: Message):
@@ -24,6 +24,12 @@ async def handle_video(message: Message):
     if not message.video and (not message.document or "video" not in message.document.mime_type):
         await message.reply("Incorrect video file")
     else:
+        try:
+            await dp.throttle('handle_video', rate=5)
+        except Throttled:
+            await message.reply("Are you throttled. You can use 1 request in 5 seconds")
+            return
+
         pr_message = await message.reply("Processing...")
         if message.video:
             file_name = message.video.file_name
