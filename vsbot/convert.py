@@ -6,8 +6,8 @@ from vsbot.log import logger
 
 CMD = """ffmpeg -hide_banner -i "{input_path}" \
 -vf "scale=w=512:h=512:force_original_aspect_ratio=decrease,fps=30" \
--c:v libvpx-vp9 -pix_fmt yuva420p -deadline good -row-mt 1 -b:v 500K -maxrate 500K \
--an -t 3  -y "{output_video}\""""
+-c:v libvpx-vp9 -pix_fmt yuva420p -deadline good -row-mt 1 -minrate 500K -maxrate 500K -b:v 500K \
+-an -t 3 -y "{output_video}\""""
 
 CHECK_CMD = """ffprobe -hide_banner -print_format json -show_format -show_streams -i "{input_video}\""""
 MAX_HEIGHT = 512
