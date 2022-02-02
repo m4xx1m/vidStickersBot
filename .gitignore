@@ -1,0 +1,5 @@
+/config.json
+/bot.db
+.idea
+.vscode
+__pycache__
