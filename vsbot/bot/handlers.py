@@ -1,3 +1,4 @@
+import asyncio
 import os
 from tempfile import mkstemp
 from aiogram.types import Message
@@ -20,6 +21,12 @@ async def start(message: Message):
         "Hello!\nI'm help you convert video to required format for @stickers!\nSend me a video and I do the magic!")
 
 
+async def _send_upload_task(bot, chat_id):
+    while True:
+        await bot.send_chat_action(chat_id, "upload_video")
+        await asyncio.sleep(4.5)
+
+
 async def handle_video(message: Message):
     if not message.video and (not message.document or "video" not in message.document.mime_type):
         await message.reply("Incorrect video file")
@@ -31,6 +38,8 @@ async def handle_video(message: Message):
             return
 
         pr_message = await message.reply("Processing...")
+        typing_task = asyncio.get_event_loop().create_task(_send_upload_task(message.bot, message.from_user.id))
+
         if message.video:
             file_name = message.video.file_name
         else:
@@ -44,6 +53,7 @@ async def handle_video(message: Message):
 
         proc_hash = hash((handled_vid_temp_path, completed_vid_temp_path))
 
+        logger.info(f"{proc_hash} | {message.from_user.id} Processing video")
         logger.debug(f"{proc_hash} | Downloading")
 
         if message.document:
@@ -56,8 +66,8 @@ async def handle_video(message: Message):
         logger.debug(f"{proc_hash} | Uploading")
 
         with open(completed_vid_temp_path, "rb") as completed_file:
-            await message.answer_document(completed_file)
-
+            await message.reply_document(completed_file)
+        typing_task.cancel()
         logger.debug(f"{proc_hash} | Deleting temp files")
         os.close(completed_fd)
         os.remove(handled_vid_temp_path)

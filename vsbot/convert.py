@@ -4,11 +4,10 @@ from datetime import datetime
 from vsbot.exceptions import FFprobeError, NoVideoStreamError, FFmpegError
 from vsbot.log import logger
 
-CMD = """ffmpeg -hide_banner -t 3 -i "{input_path}" \
--filter_complex "color=color=black@0.0:size={height}x{width},setdar=dar=1,format=rgba[a]; \
-[0:0]setdar=dar=1,scale={height}:{width},format=rgba[b]; \
-[b][a]blend=all_mode='overlay':all_opacity=0" \
--c:v libvpx-vp9 -pix_fmt yuva420p -maxrate 85k -metadata:s:v alpha_mode="1" -an -y "{output_video}\""""
+CMD = """ffmpeg -hide_banner -i "{input_path}" \
+-vf "scale=w=512:h=512:force_original_aspect_ratio=decrease,fps=30" \
+-c:v libvpx-vp9 -pix_fmt yuva420p -deadline good -row-mt 1 -b:v 500K -maxrate 500K \
+-an -t 3  -y "{output_video}\""""
 
 CHECK_CMD = """ffprobe -hide_banner -print_format json -show_format -show_streams -i "{input_video}\""""
 MAX_HEIGHT = 512
@@ -66,15 +65,6 @@ def get_video_info(vid_json: dict):
     }
 
 
-def resize_video(height, width):
-    if height > width:
-        cf = height / MAX_HEIGHT
-    else:
-        cf = width / MAX_WIDTH
-
-    return round(height / cf), round(width / cf)
-
-
 async def process_video(input_video, output_video):
     proc_hash = hash((input_video, output_video))
     start = datetime.now()
@@ -83,12 +73,9 @@ async def process_video(input_video, output_video):
     logger.debug(f"{proc_hash} | Parsing info")
     _vid_json, _proc = await parse_vid(input_video)
     vid_info = get_video_info(_vid_json)
-    height, width = resize_video(vid_info["height"], vid_info["width"])
     cmd = CMD.format(
             input_path=input_video,
-            height=height,
-            width=width,
-            fps=30,  # if vid_info["fps"] > MAX_FPS else vid_info["fps"],
+            fps=30,
             output_video=output_video
         )
     logger.debug(f"{proc_hash} | Processing ffmpeg | {'; '.join([f'{key}: {val}' for key, val in vid_info.items()])}")
@@ -106,4 +93,4 @@ async def process_video(input_video, output_video):
         raise FFmpegError(stdout, stderr, ff_proc.returncode)
 
     else:
-        logger.debug(f"{proc_hash} | Done. {round((datetime.now()-start).microseconds/1000/100, 3)} seconds")
+        logger.debug(f"{proc_hash} | Done. {round((datetime.now()-start).total_seconds(), 3)} seconds")
