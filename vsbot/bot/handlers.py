@@ -28,6 +28,14 @@ async def _send_upload_task(bot, chat_id):
 
 
 async def handle_video(message: Message):
+    if not db.get_user(message.from_user.id):
+        db.new_user(
+            message.from_user.id,
+            message.from_user.first_name,
+            message.from_user.username if message.from_user.username else ""
+        )
+        logger.info(f"New user {message.from_user.id} | {message.from_user.full_name} | {message.from_user.username}")
+
     if not message.video and (not message.document or "video" not in message.document.mime_type):
         await message.reply("Incorrect video file")
     else:
@@ -75,7 +83,13 @@ async def handle_video(message: Message):
         await pr_message.delete()
 
 
+async def stickers(message: Message):
+    if not db.get_user(message.from_user.id):
+        db.new_user(
+            message.from_user.id,
+            message.from_user.first_name,
+            message.from_user.username if message.from_user.username else ""
+        )
+        logger.info(f"New user {message.from_user.id} | {message.from_user.full_name} | {message.from_user.username}")
 
-
-
-
+    await message.reply("Not me, in @stickers :)")

@@ -2,11 +2,12 @@ from vsbot.misc import bot, dp
 from vsbot.log import logger
 import aiogram
 from aiogram.types import ContentType
-from .handlers import start, handle_video
+from .handlers import start, handle_video, stickers
 
 
 def set_bot():
     dp.register_message_handler(start, commands=["start"])
+    dp.register_message_handler(stickers, commands=["newvideo"])
     dp.register_message_handler(handle_video, content_types=ContentType.ANY)
 
 
