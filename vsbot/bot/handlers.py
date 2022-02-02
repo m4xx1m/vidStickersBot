@@ -53,7 +53,7 @@ async def handle_video(message: Message):
 
         proc_hash = hash((handled_vid_temp_path, completed_vid_temp_path))
 
-        logger.info(f"{proc_hash} | {message.from_user.id} Processing video")
+        logger.info(f"{proc_hash} | {message.from_user.id} | Processing video")
         logger.debug(f"{proc_hash} | Downloading")
 
         if message.document:

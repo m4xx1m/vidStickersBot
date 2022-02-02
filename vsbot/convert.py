@@ -69,7 +69,7 @@ async def process_video(input_video, output_video):
     proc_hash = hash((input_video, output_video))
     start = datetime.now()
 
-    logger.info(f"{proc_hash} | Processing {input_video}")
+    logger.debug(f"{proc_hash} | Processing {input_video}")
     logger.debug(f"{proc_hash} | Parsing info")
     _vid_json, _proc = await parse_vid(input_video)
     vid_info = get_video_info(_vid_json)
