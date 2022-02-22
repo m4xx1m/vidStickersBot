@@ -26,7 +26,9 @@ async def start(message: Message):
         return
 
     await message.reply(
-        "Hello!\nI'm help you convert video to required format for @stickers!\nSend me a video and I do the magic!")
+        "Hello!\nI can help you to convert video files into the required for @stickers bot format!\n"
+        "Send me a video file and I'll do the magic!"
+    )
 
 
 async def _send_upload_task(bot, chat_id):
@@ -49,15 +51,15 @@ async def handle_video(message: Message):
         )
         logger.info(f"New user {message.from_user.id} | {message.from_user.full_name} | {message.from_user.username}")
 
+    try:
+        await dp.throttle('send_message', rate=.3)
+    except Throttled:
+        logger.warning(f"Send message FloodWait for {message.from_user.id}")
+        return
+
     if not message.video and (not message.document or "video" not in message.document.mime_type):
         await message.reply("Incorrect video file")
     else:
-        try:
-            await dp.throttle('send_message', rate=.3)
-        except Throttled:
-            logger.warning(f"Send message FloodWait for {message.from_user.id}")
-            return
-
         try:
             await dp.throttle('handle_video', rate=5)
         except Throttled:
