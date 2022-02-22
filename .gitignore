@@ -1,5 +1,6 @@
-/config.json
-/bot.db
+config.json
+*.db*
+venv
 .idea
 .vscode
 __pycache__
