@@ -1,2 +1,2 @@
-aiogram~=2.11.2
+aiogram~=2.19
 loguru~=0.5.3
