@@ -1,4 +1,4 @@
 from loguru import logger
 
-logger.add("error.log", level="ERROR", rotation="100 MB")
-logger.add("debug.log", level="DEBUG", rotation="100 MB")
+logger.add("volumes/error.log", level="ERROR")
+logger.add("volumes/debug.log", level="DEBUG")

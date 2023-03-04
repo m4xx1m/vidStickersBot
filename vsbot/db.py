@@ -2,7 +2,7 @@ import sqlite3
 
 
 class BotDB:
-    def __init__(self, db_name: str = "bot.db"):
+    def __init__(self, db_name: str = "volumes/bot.db"):
         self.db = sqlite3.connect(db_name)
 
         # https://stackoverflow.com/questions/3300464/how-can-i-get-dict-from-sqlite-query

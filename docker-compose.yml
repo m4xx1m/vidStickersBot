@@ -1,0 +1,8 @@
+version: '3.9'
+services:
+    bot:
+      build: .
+      image: vsbot
+      restart: unless-stopped
+      volumes:
+        -   "./volumes:/app/volumes"
