@@ -6,3 +6,12 @@ services:
       restart: unless-stopped
       volumes:
         -   "./volumes:/app/volumes"
+
+    botapi:
+      image: aiogram/telegram-bot-api:latest
+      restart: unless-stopped
+      environment:
+        - TELEGRAM_API_ID=6
+        - TELEGRAM_API_HASH=eb06d4abfb49dc3eeb1aeb98ae0f581e
+      volumes:
+        - "./volumes/telegram-bot-api-data:/var/lib/telegram-bot-api"
